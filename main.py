@@ -12,6 +12,7 @@ count = 0 #this counter is so we dont check that every frame is a match to the f
 match = False #check if the face matches
 
 reference_img = cv2.imread("Computer Security\Group Project\img.jpg") #define reference image
+reference_img2 = cv2.imread("C:\Users\crisc\OneDrive\Pictures\Camera Roll\WIN_20231127_14_46_34_Pro.jpg")
 
 def check_face(frame): #checks for a match
     global match
