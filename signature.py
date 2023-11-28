@@ -67,9 +67,14 @@ def compare_signatures(template_path, target_path, threshold=0.8):
 
 # Example usage
 # template_path = 'path/to/signature_template.png'
-template_path = 'C:\Users\crisc\Downloads\signature (4).png'
+# template_path = "C:\Users\crisc\Downloads\signature (4).png"
+template_path = "C:\\Users\\crisc\\Downloads\\signature (4).png"
+
 
 # target_path = 'path/to/target_image.png'
-target_path = 'C:\Users\crisc\Downloads\signature (5).png'
+# target_path = "C:\Users\crisc\Downloads\signature (5).png"
+# target_path = "C:\\Users\\crisc\\Downloads\\signature (5).png"
+
+target_path = "C:\\Users\\crisc\\Downloads\\signature (4) - Copy.png"
 
 compare_signatures(template_path, target_path)
