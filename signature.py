@@ -179,4 +179,4 @@ template_path = "C:\\Users\\crisc\\Downloads\\signature (4).png"
 # target_path = "C:\\Users\\crisc\\Downloads\\signature (5).png"
 target_path = "C:\\Users\\crisc\\Downloads\\signature (6).png"
 
-compare_signatures(template_path, target_path, match_threshold=10)
+compare_signatures(template_path, target_path, match_threshold=5)
