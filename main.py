@@ -8,10 +8,9 @@ cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 count = 0 #this counter is so we dont check that every frame is a match to the face, but only once in a while
-
-facenum = 0
-
-reference_img = cv2.imread("img.jpg") #define reference image
+facenum = 0 #0 = no face; 1 = wrong face; 2 = correct match
+reference_img = cv2.imread("imgref/img.jpg") #define reference image
+#name = 
 
 def check_face(frame): #checks for a match
     global facenum
@@ -41,7 +40,7 @@ while True:
         else: #display if no face is detected
             cv2.putText(frame, "NO FACE.", (20,450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
 
-        cv2.imshow("Face ID Scanner", frame)
+        cv2.imshow("Face ID Scanner", frame) #define frame for camera scanner.
 
     key = cv2.waitKey(1) #process user input
     if key == ord("q"): #if 'q' is pressed break out of loop
