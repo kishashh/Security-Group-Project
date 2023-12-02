@@ -1,6 +1,5 @@
-import cv2, sys, numpy, os,time
+import cv2, numpy, os,time
 from flask import Flask, render_template, Response
-
 
 app = Flask(__name__)
 @app.route('/')
@@ -40,7 +39,7 @@ for (subdirs, dirs, files) in os.walk(image_dir):
             images.append(cv2.imread(path, 0))
             labels.append(int(label))
         id += 1
-(im_width, im_height) = (120, 102)
+(im_width, im_height) = (120, 120)
 
 # Create a Numpy array from the two lists above
 (images, labels) = [numpy.array(lis) for lis in [images, labels]]
@@ -80,11 +79,15 @@ def process():
             start =(x, y)
             end =(x + w, y + h)
             # Try to recognize the face
+            #TODO: remove "prediction" and insead use name given
             prediction = model.predict(face_resize)
             cv2.rectangle(frame,start , end, (0, 255, 0), 3) # creating a bounding box for detected face
             cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 255, 255), -3) # creating  rectangle on the upper part of bounding box
             #for i in prediction[1]
-            if prediction[1]<90 :  # note: 0 is the perfect match  the higher the value the lower the accuracy
+            if prediction[1]<60 :
+                cv2.putText(frame, 'MATCH!',(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
+                print('%s - %.0f' % (names[prediction[0]],prediction[1]) + " MATCH!")
+            elif prediction[1]<90 :  # NOTE: 0 is the perfect match  the higher the value the lower the accuracy
                 cv2.putText(frame,'%s - %.0f' % (names[prediction[0]],prediction[1]),(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
                 print('%s - %.0f' % (names[prediction[0]],prediction[1]))
             else:

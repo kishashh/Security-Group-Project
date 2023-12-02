@@ -1,17 +1,19 @@
 # make sure to give name of sample in line 7
-import cv2, sys, numpy, os
+import cv2, sys, os
 size = 2
 classifier = 'haarcascade_frontalface_default.xml'
 image_dir = 'imgref'
+username = input("Enter your name: ")
+
 try:
-    name_class = "Matt" # name of person for recognition
+    name_class = username # name of person for recognition
 except:
     print("You must provide a name")
     sys.exit(0)
 path = os.path.join(image_dir, name_class)
 if not os.path.isdir(path):
     os.mkdir(path)
-(im_width, im_height) = (112, 92)
+(im_width, im_height) = (112, 112)
 haar_cascade = cv2.CascadeClassifier(classifier)
 webcam = cv2.VideoCapture(0)
 
