@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>Face Recognition test</title>
+  </head>
+  <body>
+    <h1>Face Recognition Test</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async (event) => {
+            const video = document.getElementById('video');
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+                // Set the video source to the user's camera
+                video.srcObject = stream;
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+            }
+        });
+    </script>
+  </body>
+</html>
