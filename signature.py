@@ -176,8 +176,8 @@ def compare_signatures(template_path, target_path, match_threshold=130):
 
 # Example usage with a match threshold of 10
 template_path = "C:\\Users\\crisc\\Downloads\\signature (4).png" # Test Signature
-target_path = "C:\\Users\\crisc\\Downloads\\signature (5).png" # Test Signature against same name
-# target_path = "C:\\Users\\crisc\\Downloads\\signature (8).png" # Test Signature against BR
+# target_path = "C:\\Users\\crisc\\Downloads\\signature (5).png" # Test Signature against same name
+target_path = "C:\\Users\\crisc\\Downloads\\signature (8).png" # Test Signature against BR
 # target_path = "C:\\Users\\crisc\\Downloads\\signature (9).png" # Test Signature against JW
 
 
