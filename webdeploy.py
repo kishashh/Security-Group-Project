@@ -18,8 +18,8 @@ connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={u
 def index():
     return render_template('signupName.html')
 
-@app.route('/signup_form', methods=['POST'])
-def signup_form():
+@app.route('/signupName', methods=['POST'])
+def signupName():
     firstname = request.form['fname']
     lastname = request.form['lname']
     email = request.form['email']
@@ -37,49 +37,19 @@ def signup_form():
         if 'connection' in locals():
             connection.close()
     
-    return redirect(url_for('signupFace'))
+    #return redirect(url_for('signupFace'))
+    return render_template('signupFace.html')
 
 @app.route('/signupFace', methods=['POST'])
 def signupFace():
-    render_template('signupFace.html') #Might need to change to {{ url_for(signupFace)}}
-    firstname = request.form['fname']
-    lastname = request.form['lname']
-    email = request.form['email']
-
-    try:
-        # Connect to the database
-        connection = pyodbc.connect(connection_string)
-        cursor = connection.cursor()
-
-        cursor.execute('INSERT INTO Users (firstname, lastname, email) VALUES (?, ?, ?)', (firstname, lastname, email))
-        connection.commit()
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        if 'connection' in locals():
-            connection.close()
-    
-    return redirect(url_for('signupSig'))
+    #render_template('signupFace.html') #Might need to change to {{ url_for(signupFace)}}
+        
+    #return redirect(url_for('signupSig'))
+    return 'Sign up Face'
 
 @app.route('/signupSig', methods=['POST'])
-def signupFace():
+def signupSig():
     render_template('signupSig.html') #Might need to change to {{ url_for(signupSig)}}
-    firstname = request.form['fname']
-    lastname = request.form['lname']
-    email = request.form['email']
-
-    try:
-        # Connect to the database
-        connection = pyodbc.connect(connection_string)
-        cursor = connection.cursor()
-
-        cursor.execute('INSERT INTO Users (firstname, lastname, email) VALUES (?, ?, ?)', (firstname, lastname, email))
-        connection.commit()
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        if 'connection' in locals():
-            connection.close()
     
     return redirect(url_for('login'))
 

@@ -12,7 +12,7 @@
     <div class="wrapper">
       <section class="form signup">
         <header>IsThisYou?</header>
-        <form action="#" enctype="multipart/form-data">
+        <form action="/signupName" methods="post" enctype="multipart/form-data">
           <div class="error-txt"></div>
           <div class="name-details">
             <div class="field input">
@@ -30,6 +30,7 @@
             </div>
             <div class="field button">
               <input type="submit" value="Save and Continue">
+            </div>
         </form>
         <div class="link">Already signed up? <a href="{{ url_for('login') }}">Login here</a></div>
       </section>

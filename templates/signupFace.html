@@ -12,7 +12,11 @@
     <div class="wrapper2">
       <section class="form signup">
         <header>IsThisYou?</header>
-
+        <form action="{{ url_for('signupFace') }}" methods="post" enctype="multipart/form-data">
+          <div class="field button">
+            <input type="submit" value="Save and Continue">
+          </div>
+        </form>
         
       </section>
     </div>
