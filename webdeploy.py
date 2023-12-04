@@ -84,19 +84,25 @@ def process():
             # Try to recognize the face
             prediction = model.predict(face_resize)
             #print(names, prediction)
-            cv2.rectangle(frame,start , end, (0, 255, 0), 3) # creating a bounding box for detected face
-            cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 255, 255), -3) # creating  rectangle on the upper part of bounding box
+            cv2.rectangle(frame,start , end, (255, 255, 255), 3) # creating a bounding box for detected face
+            cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (255, 255, 255), -3) # creating  rectangle on the upper part of bounding box
             #for i in prediction[1]
             # TODO: Fix formatting of unknown
             # TODO: Fix formatting of frame so it looks nice
             # TODO: Change colors for unknown scanning and match to red yellow green
             if prediction[1]<60 and email.lower() == names[prediction[0]].lower(): # Matches if lowercase version of email and predicted name are the same
+                cv2.rectangle(frame,start , end, (0, 255, 0), 3) # green box when its a match
+                cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 255, 0), -3) # green box when its a match
                 cv2.putText(frame, 'MATCH!',(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
                 print('%s - %.0f' % (names[prediction[0]],prediction[1]) + " MATCH!")
             elif prediction[1]<90 :  # NOTE: 0 is the perfect match  the higher the value the lower the accuracy
-                cv2.putText(frame,'%s - %.0f' % (names[prediction[0]],prediction[1]),(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
+                cv2.rectangle(frame,start , end, (0, 255, 255), 3) # yellow box when its Scanning
+                cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 255, 255), -3) # yellow box when its Scanning
+                cv2.putText(frame,'Scanning',(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
                 print('%s - %.0f' % (names[prediction[0]],prediction[1]))
-            else: #If face isnt seen
+            else: #If face isnt seen its unknown
+                cv2.rectangle(frame,start , end, (0, 0, 255), 3) # red box when its unknown
+                cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 0, 255), -3) # red box when its unknown
                 cv2.putText(frame,("Unknown {} ".format(str(int(prediction[1])))),(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.5,(0, 0, 0),thickness=2)
                 print("Unknown -",prediction[1])
         endTime = time.time()
