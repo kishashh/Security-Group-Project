@@ -12,7 +12,7 @@
     <div class="wrapper">
       <section class="form login">
         <header>IsThisYou?</header>
-        <form action="#">
+        <form action="{{ url_for('facerec') }}" method="post">
           <div class="error-txt"></div>
             <div class="field input">
               <labl>Email</labl>

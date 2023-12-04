@@ -1,7 +1,9 @@
 import cv2, numpy, os,time
-from flask import Flask, render_template, request, redirect, url_for, Response
+from flask import Flask, render_template, request, redirect, url_for, Response, session
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
+app.secret_key = 'your_secret_key'  # Change this to a secure secret key
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('signup.html')
@@ -10,7 +12,16 @@ def index():
 def login():
     return render_template('login.html')
 
-size = 2 # change this to 4 to speed up processing trade off is the accuracy
+@app.route('/facerec', methods=['GET', 'POST'])
+def facerec():
+    global email
+    email = request.form.get('email') # Get the email from the form
+    session['email'] = email # Store email in session
+    print("Email received:", session['email']) #Print for test
+    # ,redirect(url_for('test'))
+    return render_template('facerec.html', email=email)
+
+size = 1 # change this to 4 to speed up processing trade off is the accuracy
 classifier = 'haarcascade_frontalface_default.xml'
 image_dir = 'imgref'
 print("Face Recognition Starting ...")
@@ -71,18 +82,21 @@ def process():
             start =(x, y)
             end =(x + w, y + h)
             # Try to recognize the face
-            #TODO: remove "prediction" and insead use name given
             prediction = model.predict(face_resize)
+            #print(names, prediction)
             cv2.rectangle(frame,start , end, (0, 255, 0), 3) # creating a bounding box for detected face
             cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 255, 255), -3) # creating  rectangle on the upper part of bounding box
             #for i in prediction[1]
-            if prediction[1]<60 :
+            # TODO: Fix formatting of unknown
+            # TODO: Fix formatting of frame so it looks nice
+            # TODO: Change colors for unknown scanning and match to red yellow green
+            if prediction[1]<60 and email.lower() == names[prediction[0]].lower(): # Matches if lowercase version of email and predicted name are the same
                 cv2.putText(frame, 'MATCH!',(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
                 print('%s - %.0f' % (names[prediction[0]],prediction[1]) + " MATCH!")
             elif prediction[1]<90 :  # NOTE: 0 is the perfect match  the higher the value the lower the accuracy
                 cv2.putText(frame,'%s - %.0f' % (names[prediction[0]],prediction[1]),(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
                 print('%s - %.0f' % (names[prediction[0]],prediction[1]))
-            else:
+            else: #If face isnt seen
                 cv2.putText(frame,("Unknown {} ".format(str(int(prediction[1])))),(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.5,(0, 0, 0),thickness=2)
                 print("Unknown -",prediction[1])
         endTime = time.time()
@@ -103,6 +117,7 @@ def process():
 def video_feed():
     #Video streaming route
     return Response(process(),mimetype='multipart/x-mixed-replace; boundary=frame')
+
 if __name__ == "__main__":
     app.run(host='192.168.56.1',port='5000', debug=False,threaded = True)
 # Matts Laptop  : 10.204.154.133

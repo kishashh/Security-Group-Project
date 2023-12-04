@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter Your Name</title>
+    <title>Test Page</title>
 </head>
 <body>
-    <form method="post">
-        <label for="name">Enter your name:</label>
-        <input type="text" id="name" name="name" required>
-        <button type="submit">Submit</button>
-    </form>
+    <h1>This is a test page</h1>
+    {% if email %}
+        <p>Email received: {{ email }}</p>
+    {% else %}
+        <p>No email received.</p>
+    {% endif %}
 </body>
 </html>
