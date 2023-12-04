@@ -196,7 +196,7 @@ import base64
 
 app = Flask(__name__)
 
-def compare_signatures(template, target, match_threshold=130, similarity_threshold=0.75):
+def compare_signatures(template, target, match_threshold=110, similarity_threshold=0.75):
     # Initialize the ORB detector
     orb = cv2.ORB_create()
 

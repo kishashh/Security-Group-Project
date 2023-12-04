@@ -96,7 +96,8 @@
 
                 // Example: Show a message based on the result and similarity
         if (data.match) {
-            alert(`Signatures match with ${Math.round(data.similarity * 100)}% similarity!`);
+            // alert(`Signatures match with ${Math.round(data.similarity * 100)}% similarity!`);
+            alert(`Signatures match! Continue to login.`);
         } else {
             alert("Signatures do not match.");
         }
