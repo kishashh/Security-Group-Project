@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie-edge">
+    <title>Project Manhattan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- For the above line, make it work with style.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- make above wrapper2 -->
+        <section class="form success">
+    <h1>IsThisYou?</h1>
+    {% if email %}
+        <p>Email received: {{ email }}</p>
+    {% else %}
+        <p>No email received.</p>
+    {% endif %}
+    <p>Please sign your name below: </p>
+    <!-- Add a form to input the name -->
+    <form action="#" method="post">
+        <!-- signature thing here -->
+        <div class="field button">
+            <input type="submit" value="Continue when Signed">
+        </div>
+    </form>
+    <form action="#" enctype="multipart/form-data">
+    </form>
+    </section>
+      </div>
+</body>
+</html>

@@ -6,7 +6,7 @@ app.secret_key = 'your_secret_key'  # Change this to a secure secret key
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('signup.html')
+    return render_template('signupName.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -82,7 +82,6 @@ def process():
             cv2.rectangle(frame,start , end, (255, 255, 255), 3) # creating a bounding box for detected face
             cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (255, 255, 255), -3) # creating  rectangle on the upper part of bounding box
             #for i in prediction[1]
-            # TODO: Fix formatting of unknown
             if prediction[1]<60 and email.lower() == names[prediction[0]].lower(): # Matches if lowercase version of email and predicted name are the same
                 ismatch = True
                 cv2.rectangle(frame,start , end, (0, 255, 0), 3) # green box when its a match
@@ -125,7 +124,7 @@ def facerec():
 @app.route('/validface', methods=['GET', 'POST'])
 def validface():
     if ismatch == True:
-        return render_template('test.html', email=email)
+        return render_template('signature.html', email=email)
     else:
         return render_template('failLogin.html', email=email)
 
