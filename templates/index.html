@@ -94,13 +94,15 @@
                 // Handle the response from the server
                 console.log(data);
 
-                if (data.match) {
-            alert("Signatures match!");
+                // Example: Show a message based on the result and similarity
+        if (data.match) {
+            alert(`Signatures match with ${Math.round(data.similarity * 100)}% similarity!`);
         } else {
             alert("Signatures do not match.");
         }
-            })
-            .catch(error => console.error('Error:', error));
+    })
+    .catch(error => console.error('Error:', error));
+
         });
     </script>
 

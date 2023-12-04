@@ -192,10 +192,11 @@
 from flask import Flask, request, jsonify, render_template
 import cv2
 import numpy as np
+import base64
 
 app = Flask(__name__)
 
-def compare_signatures(template, target):
+def compare_signatures(template, target, match_threshold=130, similarity_threshold=0.75):
     # Initialize the ORB detector
     orb = cv2.ORB_create()
 
@@ -212,11 +213,25 @@ def compare_signatures(template, target):
     # Sort them in ascending order of distance
     matches = sorted(matches, key=lambda x: x.distance)
 
+    # # Check if the number of matches exceeds the threshold
+    # if len(matches) >= 130:  # Adjust the threshold as needed
+    #     return {"match": True, "num_matches": len(matches)}
+    # else:
+    #     return {"match": False, "num_matches": len(matches)}
+
     # Check if the number of matches exceeds the threshold
-    if len(matches) >= 130:  # Adjust the threshold as needed
-        return {"match": True, "num_matches": len(matches)}
+    if len(matches) >= match_threshold:
+        # Calculate the similarity as the ratio of good matches to total matches
+        good_matches = [m for m in matches if m.distance < match_threshold]
+        similarity = len(good_matches) / len(matches)
+
+        # Check if the similarity exceeds the similarity threshold
+        if similarity >= similarity_threshold:
+            return {"match": True, "num_matches": len(matches), "similarity": similarity}
+        else:
+            return {"match": False, "num_matches": len(matches), "similarity": similarity}
     else:
-        return {"match": False, "num_matches": len(matches)}
+        return {"match": False, "num_matches": len(matches), "similarity": 0.0}
 
 @app.route('/')
 def index():
