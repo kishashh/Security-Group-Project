@@ -1,9 +1,23 @@
-<html>
-  <head>
-    <title>Face Recognition Streaming</title>
-  </head>
-  <body>
-    <h1>Face Recognition Browser Demo</h1>
-    <img id="bg" src="{{ url_for('video_feed') }}">
-  </body>
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition</title>
+</head>
+<body>
+    <h1>Face Recognition</h1>
+    
+    <!-- Add a form to input the name -->
+    <form action="{{ url_for('video_feed') }}" method="post">
+        <label for="name">Enter Name:</label>
+        <input type="text" id="name" name="name" required>
+        <input type="submit" value="Submit">
+    </form>
+    
+    <!-- Video feed -->
+    <img src="{{ url_for('video_feed') }}" alt="Video Feed">
+</body>
 </html>

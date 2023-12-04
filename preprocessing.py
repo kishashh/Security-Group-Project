@@ -22,8 +22,8 @@ pin=sorted([int(n[:n.find('.')]) for n in os.listdir(path)
      if n[0]!='.' ]+[0])[-1] + 1
 
 # Beginning message
-print("\n\033[94mThe program will save 20 samples. \
-Move your head around to increase while it runs.\033[0m\n")
+print("\n\033[94mThe program will save 40 samples. \
+Move your head around to increase efficiency while it runs.\033[0m\n")
 
 # The program loops until it has 20 images of the face.
 count = 0

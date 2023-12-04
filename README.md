@@ -3,6 +3,11 @@
 
 ### Installation
 The following are the needed installations for the facial recognitions portion of the program.
+1. Opencv
 ```bash
-pip install opencv-python deepface
+pip3 install opencv-contrib-python
+```
+2. Flask
+```bash
+pip3 install flask
 ```

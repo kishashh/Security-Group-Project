@@ -1,11 +1,25 @@
-import cv2, numpy, os,time
-from flask import Flask, render_template, Response
+import cv2, sys, numpy, os, time
+from flask import Flask, render_template, Response, request, session, redirect, url_for
 
 app = Flask(__name__)
-@app.route('/')
+app.secret_key = 'your_secret_key'  # Change this to a secure secret key
+
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    #Video streaming home page
-    return render_template('index.html')
+    if request.method == 'POST':
+        user_input_name = request.form['name']
+        session['user_input_name'] = user_input_name
+        return redirect(url_for('video_page'))  # Redirect to the video page
+    else:
+        return render_template('name_input.html')  # Display the page for entering the name
+
+@app.route('/video_feed')
+def video_page():
+    user_input_name = session.get('user_input_name', None)
+    if user_input_name is None:
+        return redirect(url_for('index'))  # Redirect to the name input page if name is not provided
+
+    return render_template('video_feed.html', user_input_name=user_input_name)
 
 size = 2 # change this to 4 to speed up processing trade off is the accuracy
 classifier = 'haarcascade_frontalface_default.xml'
@@ -46,7 +60,7 @@ for (subdirs, dirs, files) in os.walk(image_dir):
 model = cv2.face.LBPHFaceRecognizer_create()
 model.train(images, labels)
 haar_cascade = cv2.CascadeClassifier(classifier)
-webcam = cv2.VideoCapture(0) #  0 to use webcam
+webcam = cv2.VideoCapture(0) #  0 to use webcam 
 
 def process():
     while True:
@@ -81,12 +95,21 @@ def process():
             # Try to recognize the face
             #TODO: remove "prediction" and insead use name given
             prediction = model.predict(face_resize)
+            #print(prediction)
             cv2.rectangle(frame,start , end, (0, 255, 0), 3) # creating a bounding box for detected face
             cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 255, 255), -3) # creating  rectangle on the upper part of bounding box
             #for i in prediction[1]
-            if prediction[1]<60 :
-                cv2.putText(frame, 'MATCH!',(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
+
+            if prediction[1]<60:
+                cv2.putText(frame, 'MATCH FOUND!',(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
                 print('%s - %.0f' % (names[prediction[0]],prediction[1]) + " MATCH!")
+                print (user_input_name, names[prediction[0]])
+                if user_input_name == names[prediction[0]]:
+                    print("MATCHES NAME")
+            #if prediction[1]<60 :
+            #    #print(names)
+            #    cv2.putText(frame, 'MATCH!',(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
+            #    print('%s - %.0f' % (names[prediction[0]],prediction[1]) + " MATCH!")
             elif prediction[1]<90 :  # NOTE: 0 is the perfect match  the higher the value the lower the accuracy
                 cv2.putText(frame,'%s - %.0f' % (names[prediction[0]],prediction[1]),(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
                 print('%s - %.0f' % (names[prediction[0]],prediction[1]))
@@ -110,10 +133,10 @@ def process():
     webcam.release()
     cv2.destroyAllWindows()
 
-@app.route('/video_feed')
-def video_feed():
-    #Video streaming route
-    return Response(process(),mimetype='multipart/x-mixed-replace; boundary=frame')
+# @app.route('/video_feed')
+# def video_feed():
+#     #Video streaming route
+#     return Response(process(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == "__main__":
-    app.run(host='192.168.56.1',port='5000', debug=False,threaded = True)
+    app.run(host='10.204.154.133',port='5000', debug=False,threaded = True) #NOTE: IP needs to be replaced with the IPV4 of your machine
