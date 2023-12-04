@@ -18,16 +18,9 @@ body{
 /* make a box around the body */
 .wrapper{
   background: #fff;
-  width: 450px;
-  border-radius: 16px;
-  box-shadow: 0 0 128px 0 rgba(0,0,0,0.1),
-              0 32px 64px -48px rgba(0,0,0,0.5);
-}
-.wrapper2{
-  background: #fff;
   width: 700px;
   border-radius: 16px;
-  box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1),
+  box-shadow: 0 0 128px 0 rgba(0,0,0,0.1),
               0 32px 64px -48px rgba(0,0,0,0.5);
 }
 /* signup form CSS code */

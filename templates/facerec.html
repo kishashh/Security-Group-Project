@@ -1,5 +1,3 @@
-<!-- index.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie-edge">
     <title>Project Manhattan</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='facerec.css') }}">
+    <!-- For the above line, make it work with style.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
 </head>
 <body>
     <div class="wrapper">
+        <!-- make above wrapper2 -->
         <section class="form success">
     <h1>IsThisYou?</h1>
     {% if email %}
@@ -19,15 +19,14 @@
     {% else %}
         <p>No email received.</p>
     {% endif %}
+    <p>Face recognition starting please wait...</p>
     <!-- Add a form to input the name -->
-    <form action="{{ url_for('video_feed') }}" method="post">
+    <form action="{{ url_for('validface') }}" method="post">
         <img src="{{ url_for('video_feed') }}" alt="Video Feed">
+        <div class="field button">
+            <input type="submit" value="Continue when Match">
+        </div>
     </form>
-    
-    <!-- Video feed -->     
-    {% if '/page2' in request.path %}
-        <img src="{{ url_for('video_feed') }}" alt="Video Feed">
-    {% endif %}
     <form action="#" enctype="multipart/form-data">
     </form>
     </section>

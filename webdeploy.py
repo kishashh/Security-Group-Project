@@ -1,4 +1,4 @@
-import cv2, numpy, os,time
+import cv2, numpy, os,time, threading
 from flask import Flask, render_template, request, redirect, url_for, Response, session
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -12,18 +12,11 @@ def index():
 def login():
     return render_template('login.html')
 
-@app.route('/facerec', methods=['GET', 'POST'])
-def facerec():
-    global email
-    email = request.form.get('email') # Get the email from the form
-    session['email'] = email # Store email in session
-    print("Email received:", session['email']) #Print for test
-    # ,redirect(url_for('test'))
-    return render_template('facerec.html', email=email)
-
 size = 1 # change this to 4 to speed up processing trade off is the accuracy
 classifier = 'haarcascade_frontalface_default.xml'
 image_dir = 'imgref'
+# ismatch_lock = threading.Lock()
+ismatch = False # if theres a match to the face this will be true
 print("Face Recognition Starting ...")
 # Create a list of images,labels,dictionary of corresponding names
 (images, labels, names, id) = ([], [], {}, 0)
@@ -55,7 +48,9 @@ model = cv2.face.LBPHFaceRecognizer_create()
 model.train(images, labels)
 haar_cascade = cv2.CascadeClassifier(classifier)
 webcam = cv2.VideoCapture(0) #  0 to use webcam
+
 def process():
+    global ismatch
     while True:
         # Loop until the camera is working
         rval = False
@@ -88,23 +83,23 @@ def process():
             cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (255, 255, 255), -3) # creating  rectangle on the upper part of bounding box
             #for i in prediction[1]
             # TODO: Fix formatting of unknown
-            # TODO: Fix formatting of frame so it looks nice
-            # TODO: Change colors for unknown scanning and match to red yellow green
             if prediction[1]<60 and email.lower() == names[prediction[0]].lower(): # Matches if lowercase version of email and predicted name are the same
+                ismatch = True
                 cv2.rectangle(frame,start , end, (0, 255, 0), 3) # green box when its a match
                 cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 255, 0), -3) # green box when its a match
                 cv2.putText(frame, 'MATCH!',(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
-                print('%s - %.0f' % (names[prediction[0]],prediction[1]) + " MATCH!")
+                print('%s - %.0f' % (names[prediction[0]],prediction[1]) + " MATCH! - " + str(ismatch))
+                #print("(scanner) ismatch = "+ str(ismatch)) # Test to see if ismatch is true when this condition is met
             elif prediction[1]<90 :  # NOTE: 0 is the perfect match  the higher the value the lower the accuracy
                 cv2.rectangle(frame,start , end, (0, 255, 255), 3) # yellow box when its Scanning
                 cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 255, 255), -3) # yellow box when its Scanning
                 cv2.putText(frame,'Scanning',(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.6,(0, 0, 0),thickness=2)
-                print('%s - %.0f' % (names[prediction[0]],prediction[1]))
+                print('%s - %.0f' % (names[prediction[0]],prediction[1]) + " - " + str(ismatch))
             else: #If face isnt seen its unknown
                 cv2.rectangle(frame,start , end, (0, 0, 255), 3) # red box when its unknown
                 cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 0, 255), -3) # red box when its unknown
                 cv2.putText(frame,("Unknown {} ".format(str(int(prediction[1])))),(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.5,(0, 0, 0),thickness=2)
-                print("Unknown -",prediction[1])
+                print("Unknown - %.0f" % prediction[1] + " - " + str(ismatch))
         endTime = time.time()
         fps = 1/(endTime-startTime)   
         cv2.rectangle(frame,(30,48),(130,70),(0,0,0),-1)
@@ -118,6 +113,21 @@ def process():
                     break
     webcam.release()
     cv2.destroyAllWindows()
+
+@app.route('/facerec', methods=['GET', 'POST'])
+def facerec():
+    global email, ismatch
+    email = request.form.get('email') # Get the email from the form
+    session['email'] = email # Store email in session
+    print("Email received:", session['email']) #Print for test
+    return render_template('facerec.html', email=email)
+
+@app.route('/validface', methods=['GET', 'POST'])
+def validface():
+    if ismatch == True:
+        return render_template('test.html', email=email)
+    else:
+        return render_template('failLogin.html', email=email)
 
 @app.route('/video_feed')
 def video_feed():
