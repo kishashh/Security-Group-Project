@@ -35,7 +35,7 @@ def signup_form():
         if 'connection' in locals():
             connection.close()
     
-    return 'Name and email insterted succesfully'
+    return redirect(url_for('signup_form'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
