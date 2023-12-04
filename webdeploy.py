@@ -1,16 +1,14 @@
 import cv2, numpy, os,time
 from flask import Flask, render_template, request, redirect, url_for, Response
-app = Flask(__name__)
+
+app = Flask(__name__, template_folder='templates', static_folder='static')
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-        name = request.form['name']
-        return redirect(url_for('page2', name=name))
-    return render_template('index.html')
+    return render_template('signup.html')
 
-@app.route('/page2/<name>')
-def page2(name):
-    return f'HELLO {name}!'
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    return render_template('login.html')
 
 size = 2 # change this to 4 to speed up processing trade off is the accuracy
 classifier = 'haarcascade_frontalface_default.xml'
