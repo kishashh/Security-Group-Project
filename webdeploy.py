@@ -1,12 +1,58 @@
-import cv2, numpy, os,time, threading
+import cv2, numpy, os, time, threading, pyodbc
 from flask import Flask, render_template, request, redirect, url_for, Response, session
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = 'your_secret_key'  # Change this to a secure secret key
 
+# Set your connection details
+server = 'computer-security-fortnite-group.database.windows.net'
+database = 'is-this-you-db'
+username = 'fortnite'
+password = '5Nights!'
+driver = '{ODBC Driver 17 for SQL Server}'  # Use the correct driver version
+
+# Build the connection string
+connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('signupName.html')
+
+#When continue is pressed from the sign in is pressed, the name and email is saved into the DB and we are taken to the face page
+@app.route('/signupFace', methods=['POST'])
+def signupFace(): 
+    firstname = request.form['fname']
+    lastname = request.form['lname']
+    email = request.form['email']
+
+    try:
+        # Connect to the database
+        connection = pyodbc.connect(connection_string)
+        cursor = connection.cursor()
+
+        cursor.execute('INSERT INTO Users (firstname, lastname, email) VALUES (?, ?, ?)', (firstname, lastname, email))
+        connection.commit()
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        if 'connection' in locals():
+            connection.close()
+    
+    return render_template('signupFace.html')
+
+@app.route('/signupSig', methods=['POST'])
+def signupSig():
+    #render_template('signupFace.html') #Might need to change to {{ url_for(signupFace)}}
+        
+    #return redirect(url_for('signupSig'))
+    #return render_template('signupFace.html')
+    return 'Sign up face'
+
+# @app.route('/signupSig', methods=['POST'])
+# def signupSig():
+#     render_template('signupSig.html') #Might need to change to {{ url_for(signupSig)}}
+    
+#     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
