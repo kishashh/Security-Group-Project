@@ -2,34 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie-edge">
     <title>Project Manhattan</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <!-- For the above line, make it work with style.css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='facerec.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
 </head>
 <body>
+
+
     <div class="wrapper">
-        <!-- make above wrapper2 -->
         <section class="form success">
-    <h1>IsThisYou?</h1>
-    {% if email %}
+        <header>IsThisYou?</header>
         <p>Email received: {{ email }}</p>
-    {% else %}
-        <p>No email received.</p>
-    {% endif %}
-    <p>Please sign your name below: </p>
-    <!-- Add a form to input the name -->
-    <form action="#" method="post">
-        <!-- signature thing here -->
-        <div class="field button">
-            <input type="submit" value="Continue when Signed">
+        <p>Please sign below: </p>
+        <canvas id="signature-pad" width="600" height="400"></canvas>
+        <!--  -->
+        <form action="#" method="post">
+            <div class="field button">
+                <input type="submit"value="Check Signature" >
+            </div>
+        </form>
+        <!--  -->
+        <div class="clear-btn">
+            <button id="clear"><span> Clear </span></button>
         </div>
-    </form>
-    <form action="#" enctype="multipart/form-data">
-    </form>
+
     </section>
-      </div>
+    </div>
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.3.5/signature_pad.min.js" integrity="sha512-kw/nRM/BMR2XGArXnOoxKOO5VBHLdITAW00aG8qK4zBzcLVZ4nzg7/oYCaoiwc8U9zrnsO9UHqpyljJ8+iqYiQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        var canvas = document.getElementById("signature-pad");
+        var signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(250,250,250)'
+        });
+
+        document.getElementById("clear").addEventListener('click', function(){
+            signaturePad.clear();
+        });
+
+        document.getElementById("check").addEventListener('click', function(){
+            // Convert the signature to an image (you may need to adjust the dimensions)
+            var signatureImage = signaturePad.toDataURL();
+
+            // Send the signature image to the server for processing
+            // Example using fetch API (replace with your actual server endpoint)
+            fetch('/upload_signature', {
+                method: 'POST',
+                body: JSON.stringify({ signatureImage: signatureImage }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the server
+                console.log(data);
+
+                // Example: Show a message based on the result and similarity
+        if (data.match) {
+            // alert(`Signatures match with ${Math.round(data.similarity * 100)}% similarity!`);
+            alert(`Signatures match! Continue to login.`);
+        } else {
+            alert("Signatures do not match.");
+        }
+    })
+    .catch(error => console.error('Error:', error));
+
+        });
+    </script>
+
 </body>
 </html>
+

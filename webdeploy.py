@@ -1,5 +1,6 @@
-import cv2, numpy, os,time, threading
-from flask import Flask, render_template, request, redirect, url_for, Response, session
+import cv2, numpy, os,time, threading, base64
+import numpy as np
+from flask import Flask, render_template, request, redirect, url_for, Response, session, jsonify
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = 'your_secret_key'  # Change this to a secure secret key
@@ -51,6 +52,7 @@ webcam = cv2.VideoCapture(0) #  0 to use webcam
 
 def process():
     global ismatch
+    ismatch = True
     while True:
         # Loop until the camera is working
         rval = False
@@ -82,7 +84,7 @@ def process():
             cv2.rectangle(frame,start , end, (255, 255, 255), 3) # creating a bounding box for detected face
             cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (255, 255, 255), -3) # creating  rectangle on the upper part of bounding box
             #for i in prediction[1]
-            if prediction[1]<60 and email.lower() == names[prediction[0]].lower(): # Matches if lowercase version of email and predicted name are the same
+            if prediction[1]<75 and email.lower() == names[prediction[0]].lower(): # Matches if lowercase version of email and predicted name are the same
                 ismatch = True
                 cv2.rectangle(frame,start , end, (0, 255, 0), 3) # green box when its a match
                 cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 255, 0), -3) # green box when its a match
@@ -113,7 +115,79 @@ def process():
     webcam.release()
     cv2.destroyAllWindows()
 
-@app.route('/facerec', methods=['GET', 'POST'])
+def sig_checker(template, target, match_threshold=110, similarity_threshold=0.75):
+    # Initialize the ORB detector
+    orb = cv2.ORB_create()
+
+    # Find the key points and descriptors with ORB
+    kp1, des1 = orb.detectAndCompute(template, None)
+    kp2, des2 = orb.detectAndCompute(target, None)
+
+    # Create a BFMatcher (Brute Force Matcher) object
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+    # Match descriptors
+    matches = bf.match(des1, des2)
+
+    # Sort them in ascending order of distance
+    matches = sorted(matches, key=lambda x: x.distance)
+
+    # # Check if the number of matches exceeds the threshold
+    # if len(matches) >= 130:  # Adjust the threshold as needed
+    #     return {"match": True, "num_matches": len(matches)}
+    # else:
+    #     return {"match": False, "num_matches": len(matches)}
+
+    # Check if the number of matches exceeds the threshold
+    if len(matches) >= match_threshold:
+        # Calculate the similarity as the ratio of good matches to total matches
+        good_matches = [m for m in matches if m.distance < match_threshold]
+        similarity = len(good_matches) / len(matches)
+
+        # Check if the similarity exceeds the similarity threshold
+        if similarity >= similarity_threshold:
+            return {"match": True, "num_matches": len(matches), "similarity": similarity}
+        else:
+            return {"match": False, "num_matches": len(matches), "similarity": similarity}
+    else:
+        return {"match": False, "num_matches": len(matches), "similarity": 0.0}
+
+def sig_saver(template_path, target_path, match_threshold=130):
+    # Read the template and target images
+    template = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
+    target = cv2.imread(target_path, cv2.IMREAD_GRAYSCALE)
+
+    # Initialize the ORB detector
+    orb = cv2.ORB_create()
+
+    # Find the key points and descriptors with ORB
+    kp1, des1 = orb.detectAndCompute(template, None)
+    kp2, des2 = orb.detectAndCompute(target, None)
+
+    # Create a BFMatcher (Brute Force Matcher) object
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+    # Match descriptors
+    matches = bf.match(des1, des2)
+
+    # Sort them in ascending order of distance
+    matches = sorted(matches, key=lambda x: x.distance)
+
+    # Check if the number of matches exceeds the threshold
+    if len(matches) >= match_threshold:
+        print(f"Signatures are a potential match! (Matches: {len(matches)})")
+    else:
+        print(f"Signatures do not match. (Matches: {len(matches)})")
+
+    # Draw the first 10 matches
+    img_matches = cv2.drawMatches(template, kp1, target, kp2, matches[:130], None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+
+    # Display the matches
+    cv2.imshow('ORB Feature Matches', img_matches)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+@app.route('/facerec', methods=['GET', 'POST']) 
 def facerec():
     global email, ismatch
     email = request.form.get('email') # Get the email from the form
@@ -127,6 +201,35 @@ def validface():
         return render_template('signature.html', email=email)
     else:
         return render_template('failLogin.html', email=email)
+    
+@app.route('/upload_signature', methods=['POST']) #this should be 
+def upload_signature():
+    try:
+        data = request.get_json()
+        signature_data = data.get('signatureImage')
+
+        # Decode the base64 encoded image data
+        signature_np = np.frombuffer(
+            np.frombuffer(base64.b64decode(signature_data.split(',')[1]), np.uint8),
+            np.uint8
+        )
+
+        # Reshape the flattened array to an image
+        signature_img = cv2.imdecode(signature_np, cv2.IMREAD_GRAYSCALE)
+
+        # Example template path (replace with the actual path)
+        # template_path = "path/to/your/template_image.png"
+        
+        template_path = "sigref"
+        os.path.join(template_path, email)
+        # Perform signature comparison
+        template = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
+        result = sig_saver(template, signature_img)
+
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 @app.route('/video_feed')
 def video_feed():

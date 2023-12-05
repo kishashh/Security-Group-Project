@@ -13,23 +13,23 @@
     <div class="wrapper">
         <!-- make above wrapper2 -->
         <section class="form success">
-    <h1>IsThisYou?</h1>
-    {% if email %}
-        <p>Email received: {{ email }}</p>
-    {% else %}
-        <p>No email received.</p>
-    {% endif %}
-    <p>Face recognition starting please wait...</p>
-    <!-- Add a form to input the name -->
-    <form action="{{ url_for('validface') }}" method="post">
-        <img src="{{ url_for('video_feed') }}" alt="Video Feed">
-        <div class="field button">
-            <input type="submit" value="Continue when Match">
-        </div>
-    </form>
-    <form action="#" enctype="multipart/form-data">
-    </form>
-    </section>
-      </div>
+        <header>IsThisYou?</header>
+        {% if email %}
+            <p>Email received: {{ email }}</p>
+        {% else %}
+            <p>No email received.</p>
+        {% endif %}
+        <p>Face recognition starting please wait...</p>
+        <!-- Add a form to input the name -->
+        <form action="{{ url_for('validface') }}" method="post">
+            <img src="{{ url_for('video_feed') }}" alt="Video Feed">
+            <div class="field button">
+                <input type="submit" value="Continue when Match">
+            </div>
+        </form>
+        <form action="#" enctype="multipart/form-data">
+        </form>
+        </section>
+    </div>
 </body>
 </html>

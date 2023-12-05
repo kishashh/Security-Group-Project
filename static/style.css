@@ -148,3 +148,30 @@ form .name-details .field:last-child{
 .form .link a:hover{
   text-decoration: underline;
 }
+
+canvas#signature-pad {
+  background: #fff;
+  width: 600x;
+  height: 100%;
+  cursor: crosshair;
+}
+
+button#clear {
+  width: 120px;
+  height: 40px;
+  font-size: 12px;
+  font-family: 'Readex Pro', sans-serif;
+  padding: 0.5em, 1em;
+  margin: 0.25em;
+  border-radius: 1em;
+  border: none;
+  outline: none;
+ /* background: #009578; before */
+  background: #dddddd;
+  color: #181818;
+  cursor: pointer;
+  position: absolute;
+  bottom: 150px;
+  left: 500px;
+
+}
