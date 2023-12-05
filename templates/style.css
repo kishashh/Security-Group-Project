@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    background: #ececec;
+    overflow: hidden;
+}
+
+.flex-row {
+    display: flex;
+}
+
+.wrapper {
+    border: 1px solid #4b00ff;
+}
+
+canvas#signature-pad {
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+}
+
+.clear-btn {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+button#clear,
+button#check {
+    width: 120px;
+    height: 40px;
+    font-size: 12px;
+    font-family: 'Readex Pro', sans-serif;
+    padding: 0.5em 1em;
+    margin: 0.25em;
+    border-radius: 1em;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+button#clear {
+    background: #dddddd;
+    color: #181818;
+}
+
+button#check {
+    background: #009921;
+    color: #fff;
+}
+
+button#clear:hover {
+    background: #cccccc;
+}
+
+button#check:hover {
+    background: #009578;
+}
