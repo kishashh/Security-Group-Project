@@ -18,8 +18,9 @@ connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={u
 def index():
     return render_template('signupName.html')
 
-@app.route('/signupName', methods=['POST'])
-def signupName():
+@app.route('/signupFace', methods=['POST'])
+def signupFace(): #When continue is pressed from the sign in is pressed, the name and email is saved into the DB and we are taken to the face page
+    # render_template('signupFace.html') #Might need to change to {{ url_for(signupFace)}}
     firstname = request.form['fname']
     lastname = request.form['lname']
     email = request.form['email']
@@ -37,21 +38,21 @@ def signupName():
         if 'connection' in locals():
             connection.close()
     
-    #return redirect(url_for('signupFace'))
     return render_template('signupFace.html')
-
-@app.route('/signupFace', methods=['POST'])
-def signupFace():
-    #render_template('signupFace.html') #Might need to change to {{ url_for(signupFace)}}
-        
-    #return redirect(url_for('signupSig'))
-    return 'Sign up Face'
 
 @app.route('/signupSig', methods=['POST'])
 def signupSig():
-    render_template('signupSig.html') #Might need to change to {{ url_for(signupSig)}}
+    #render_template('signupFace.html') #Might need to change to {{ url_for(signupFace)}}
+        
+    #return redirect(url_for('signupSig'))
+    #return render_template('signupFace.html')
+    return 'Sign up face'
+
+# @app.route('/signupSig', methods=['POST'])
+# def signupSig():
+#     render_template('signupSig.html') #Might need to change to {{ url_for(signupSig)}}
     
-    return redirect(url_for('login'))
+#     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
