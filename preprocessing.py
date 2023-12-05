@@ -3,7 +3,7 @@ import cv2, sys, os
 size = 2
 classifier = 'haarcascade_frontalface_default.xml'
 image_dir = 'imgref'
-username = input("Enter your name: ")
+username = input("Enter your email: ")
 
 try:
     name_class = username # name of person for recognition
