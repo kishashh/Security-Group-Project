@@ -145,7 +145,7 @@ def process():
             else: #If face isnt seen its unknown
                 cv2.rectangle(frame,start , end, (0, 0, 255), 3) # red box when its unknown
                 cv2.rectangle(frame, (start[0],start[1]-20), (start[0]+120,start[1]), (0, 0, 255), -3) # red box when its unknown
-                cv2.putText(frame,("Unknown {} ".format(str(int(prediction[1])))),(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.5,(0, 0, 0),thickness=2)
+                cv2.putText(frame,("Unknown"),(x+5, y-5), cv2.FONT_HERSHEY_SIMPLEX,0.5,(0, 0, 0),thickness=2)
                 print("Unknown - %.0f" % prediction[1] + " - " + str(ismatch))
         endTime = time.time()
         fps = 1/(endTime-startTime)   
