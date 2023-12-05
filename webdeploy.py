@@ -276,6 +276,10 @@ def upload_signature():
 
     except Exception as e:
         return jsonify({"error": str(e)})
+    
+@app.route('/user')
+def user():
+    return render_template('successLogin.html', email=email)
 
 @app.route('/video_feed')
 def video_feed():
