@@ -193,6 +193,7 @@ from flask import Flask, request, jsonify, render_template
 import cv2
 import numpy as np
 import base64
+import os
 
 app = Flask(__name__)
 
@@ -232,6 +233,14 @@ def compare_signatures(template, target, match_threshold=110, similarity_thresho
             return {"match": False, "num_matches": len(matches), "similarity": similarity}
     else:
         return {"match": False, "num_matches": len(matches), "similarity": 0.0}
+    
+
+
+
+def get_most_recent_download_path(directory):
+    files = [os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+    most_recent_file = max(files, key=os.path.getmtime)
+    return most_recent_file
 
 @app.route('/')
 def index():
@@ -254,7 +263,10 @@ def upload_signature():
 
         # Example template path (replace with the actual path)
         # template_path = "path/to/your/template_image.png"
-        template_path = "C:\\Users\\crisc\\Downloads\\signature (4).png"
+        # template_path = "C:\\Users\\crisc\\Downloads\\signature (4).png"
+
+        downloads_directory = "C:\\Users\\crisc\\Downloads"
+        template_path = get_most_recent_download_path(downloads_directory)
 
         # Perform signature comparison
         template = cv2.imread(template_path, cv2.IMREAD_GRAYSCALE)
