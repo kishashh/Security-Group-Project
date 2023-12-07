@@ -277,7 +277,7 @@ def upload_signature():
     except Exception as e:
         return jsonify({"error": str(e)})
     
-@app.route('/user')
+@app.route('/user', methods=['GET', 'POST'])
 def user():
     return render_template('successLogin.html', email=email)
 
